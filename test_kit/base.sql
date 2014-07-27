@@ -13,6 +13,8 @@
 \set QUIET 1
 -- Import these are in the public schema of what ever data
 -- base you are connected to.
+DROP SCHEMA IF EXISTS staging CASCADE;
+DROP SCHEMA IF EXISTS stg_rigel CASCADE;
 CREATE SCHEMA IF NOT EXISTS staging;
 CREATE SCHEMA IF NOT EXISTS stg_rigel;
 \ir pgtap.sql

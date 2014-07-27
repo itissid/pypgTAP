@@ -35,6 +35,8 @@ $$ LANGUAGE plpythonu;
  * milliseconds.
  * If time stamp is not in milliseconds it should be a string that is a PG
  * compatible timestamp: '%Y-%m-%d %H:%M:%S'
+ * An important thing:
+ * This table uses the column order in json path file as the order in which data is filled no matter what the keys are in the data file.
 */
 CREATE OR REPLACE FUNCTION copy_json(
     table_name varchar, json_file_name varchar, json_path_file_name varchar,
@@ -89,9 +91,8 @@ AS $$
                 else:
                     row_data.append((column, value))
 
-            statement = "insert into {table_name}({columns}) values({values})".format(
+            statement = "insert into {table_name} values({values})".format(
                     table_name=table_name,
-                    columns=", ".join("%s"%s for s, _ in row_data),
                     values=", ".join("'%s'"%s if isinstance(s, basestring) else "%s"%s for _, s in row_data))
             prep_statement = plpy.execute(statement)
 $$ LANGUAGE plpythonu;
@@ -137,10 +138,35 @@ BEGIN
         THEN
             EXECUTE 'DROP TABLE ' || under_test_schema_name || '.' || under_test_table_name;
     END IF;
-    --EXECUTE 'DROP TABLE IF EXISTS ' || under_test_schema_name ||'.'||under_test_table_name;
 END
 $$ LANGUAGE plpgsql strict;
 
+CREATE OR REPLACE FUNCTION drop_tables_if_exists(
+    under_test_tables character varying[], under_test_schema_name varchar)
+RETURNS VOID
+AS $$
+DECLARE
+ table_name character varying;
+BEGIN
+    foreach table_name in ARRAY under_test_tables
+        LOOP
+             PERFORM drop_table_if_exists(table_name, under_test_schema_name);
+        END LOOP;
+END
+$$ LANGUAGE plpgsql strict;
+
+-- SELECT debug() to insert a break point
+-- anywhere.
+CREATE OR REPLACE FUNCTION debug()
+RETURNS VOID
+AS $$
+    import pdb
+    pdb.set_trace()
+
+$$ LANGUAGE plpythonu;
+
+
+-- Execute a ddl statement in a string
 CREATE OR REPLACE FUNCTION SETUP_DDL(
     setup_statement character varying)
 RETURNS void
