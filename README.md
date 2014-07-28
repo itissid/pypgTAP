@@ -28,14 +28,14 @@ do something fancy, NP. Add a hooks/ directory to your project root and add pyth
 
 How to use.
 =====
--  First you need to install postgres on your favorite OS. [Postgres](<http://www.postgresql.org/download/macosx/>)
+-  First you need to install postgres on your favorite OS. [Postgres](http://www.postgresql.org/download/macosx/)
 
 -  Once installed fire up a postgresql instance using something like:
 
-::
-        postgres --config-file=/usr/local/var/postgres/postgresql.conf
+` postgres --config-file=/usr/local/var/postgres/postgresql.conf `
 YOU CAN TRANSPLANT YOUR .conf FILE LOCATION ABOVE IF YOU ARE ON A DIFFERENT PLATFORM.
 
 - go to the example directory to see some examples of things in action.
-::
+```
         ./test.sh
+```
