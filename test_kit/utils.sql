@@ -1,33 +1,3 @@
--- A function that copies lines  from a file
--- TODO(Sid) The file_name in the function needs to be absolute
--- so we need to create a test.sh wrapper that will copy out all the data
--- to the /tmp/test_data directory and then execute the tests.
--- This is a set up function that copies lines from file_name that are in
--- valid json and returns a TABLE type that you can use when parsing results.
-create or replace function setup_copy_json_from_file( file_name character varying )
-RETURNS TABLE( raw_data json )
-AS $$
-BEGIN
-    create table if not exists __foo(data json);
-    truncate table __foo;
-    -- This is server side execution so make sure your test server and
-    -- tested modules are in the same directories
-    execute 'copy __foo from ' || quote_literal(file_name) || ' (format text);';
-    -- I learnt that return next does not return from the function but /
-    RETURN QUERY select __foo.data from __foo;
-    RETURN;
-END;
-$$ LANGUAGE plpgsql strict;
-
-
-CREATE OR REPLACE FUNCTION get_working_path(
-    file_name varchar, project_root varchar)
-RETURNS varchar
-AS $$
-    import os
-    return os.path.join(project_root, file_name)
-$$ LANGUAGE plpythonu;
-
 /**
 * The idea here is to read a json file and copy it into a table you have
  * already created. The json_path_file should be either be absolute path or be
@@ -48,7 +18,8 @@ AS $$
     import datetime as dt
     if 'project_root' not in GD:
         raise ValueError(
-            'expected project root in the did you forget to include base.sql?')
+            'expected project root in the Global dictionary you forget to include base.sql?')
+    test_kit_relative_path = GD['test_kit_relative_path']
     project_root = GD['project_root']
     # Utility that hacks a solution to get some
     # libs that are needed by the json path parser
@@ -58,7 +29,7 @@ AS $$
         We need to bootstrap the sys.path so that we can find all the libs.
         Thats why this utility can't be anywhere else.
         """
-        lib_dir = os.path.join(project_root, '../commons/test_kit/py_utils/')
+        lib_dir = os.path.join(project_root, test_kit_relative_path, 'py_utils')
         if not os.path.exists(lib_dir):
             raise ValueError('Expected a lib dir in project_root {}'.format(project_root))
         sys.path.append(lib_dir)
