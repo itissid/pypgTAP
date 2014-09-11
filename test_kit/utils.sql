@@ -14,36 +14,15 @@ CREATE OR REPLACE FUNCTION copy_json(
 RETURNS boolean
 AS $$
     import os, json
-    import sys
-    import datetime as dt
+    import utils
+    from jsonpath_rw import parse as jp_parse
     if 'project_root' not in GD:
         raise ValueError(
             'expected project root in the Global dictionary you forget to include base.sql?')
-    test_kit_relative_path = GD['test_kit_relative_path']
     project_root = GD['project_root']
     # Utility that hacks a solution to get some
     # libs that are needed by the json path parser
 
-    def add_utils_to_path(project_root):
-        """
-        We need to bootstrap the sys.path so that we can find all the libs.
-        Thats why this utility can't be anywhere else.
-        """
-        lib_dir = os.path.join(project_root, test_kit_relative_path, 'py_utils')
-        if not os.path.exists(lib_dir):
-            raise ValueError('Expected a lib dir in project_root {}'.format(project_root))
-        sys.path.append(lib_dir)
-
-    # Add utils to your project path
-    add_utils_to_path(project_root)
-
-    import utils
-    # ... import them
-    utils.append_libs(project_root, sys.path)
-
-    from jsonpath_rw import parse as jp_parse
-
-    # Now append rest of the libs
     json_file = open(os.path.join(project_root, json_file_name))
     json_path_file = open(os.path.join(project_root, json_path_file_name))
 

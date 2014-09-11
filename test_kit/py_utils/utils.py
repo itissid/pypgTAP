@@ -8,8 +8,16 @@ import os
 import datetime as dt
 
 
-def append_libs(project_root, path=[]):
-    lib_dir = os.path.join(project_root, '../commons/lib/')
+def append_libs(project_root, lib_path_suffix, path=[]):
+    """
+    This utility adds all the top level directories in
+    project_root/lib_path_suffix to sys.path.
+    """
+    if project_root is None or lib_path_suffix is None:
+        raise ValueError(
+            'project_root({}) or lib_path({}) cannot be None'.format(
+                project_root, lib_path_suffix))
+    lib_dir = os.path.join(project_root, lib_path_suffix)
     top_library_paths = os.walk(lib_dir).next()[1]
     for lib in top_library_paths:
         path.append(os.path.join(lib_dir, lib))

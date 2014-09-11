@@ -7290,6 +7290,31 @@ RETURNS TEXT AS $$
     SELECT triggers_are( $1, $2, 'Table ' || quote_ident($1) || ' should have the correct triggers' );
 $$ LANGUAGE SQL;
 
+
+CREATE OR REPLACE FUNCTION _areni_message_helper ( text, text[], text[] )
+RETURNS TEXT AS $$
+DECLARE
+    what    ALIAS FOR $1;
+    extras  ALIAS FOR $2;
+    missing ALIAS FOR $3;
+    msg     TEXT    := '';
+BEGIN
+    IF extras[1] IS NOT NULL THEN
+        msg := E'\n' || diag(
+            '    Extra ' || what || E':\n        '
+            ||  array_to_string( extras, E'\n        ' )
+        );
+    END IF;
+    IF missing[1] IS NOT NULL THEN
+        msg := msg || E'\n' || diag(
+            '    Missing ' || what || E':\n        '
+            ||  array_to_string( missing, E'\n        ' )
+        );
+    END IF;
+	return msg;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION _areni ( text, text[], text[], TEXT )
 RETURNS TEXT AS $$
 DECLARE
@@ -7300,21 +7325,24 @@ DECLARE
     msg     TEXT    := '';
     res     BOOLEAN := TRUE;
 BEGIN
-    IF extras[1] IS NOT NULL THEN
-        res = FALSE;
-        msg := E'\n' || diag(
-            '    Extra ' || what || E':\n        '
-            ||  array_to_string( extras, E'\n        ' )
-        );
-    END IF;
-    IF missing[1] IS NOT NULL THEN
-        res = FALSE;
-        msg := msg || E'\n' || diag(
-            '    Missing ' || what || E':\n        '
-            ||  array_to_string( missing, E'\n        ' )
-        );
-    END IF;
-
+    --IF extras[1] IS NOT NULL THEN
+    --    res = FALSE;
+    --    msg := E'\n' || diag(
+    --        '    Extra ' || what || E':\n        '
+    --        ||  array_to_string( extras, E'\n        ' )
+    --    );
+    --END IF;
+    --IF missing[1] IS NOT NULL THEN
+    --    res = FALSE;
+    --    msg := msg || E'\n' || diag(
+    --        '    Missing ' || what || E':\n        '
+    --        ||  array_to_string( missing, E'\n        ' )
+    --    );
+    --END IF;
+	msg := _areni_message_helper(what, extras, missing);
+    IF msg = NULL or msg = '' THEN
+		res := TRUE;
+	END IF;
     RETURN ok(res, descr) || msg;
 END;
 $$ LANGUAGE plpgsql;
@@ -8285,6 +8313,18 @@ RETURNS TEXT AS $$
     );
 $$ LANGUAGE sql;
 
+CREATE OR REPLACE FUNCTION _set_difference ( text[], text[])
+RETURNS TEXT[] AS $$
+        select ARRAY(
+            SELECT UPPER($1[i]) AS thing
+              FROM generate_series(1, array_upper($1, 1)) s(i)
+            EXCEPT
+            SELECT UPPER($2[i]) AS other_thing
+              FROM generate_series(1, array_upper($2, 1)) s(i)
+             ORDER BY thing
+        );
+$$ LANGUAGE SQL;
+
 CREATE OR REPLACE FUNCTION _assets_are ( text, text[], text[], TEXT )
 RETURNS TEXT AS $$
     SELECT _areni(
@@ -8411,6 +8451,74 @@ RETURNS TEXT AS $$
             || ' on table ' || quote_ident($1)
     );
 $$ LANGUAGE SQL;
+
+-- table_priv_message ( table, user, privileges[] )
+-- A message that is common to many functions.
+CREATE OR REPLACE FUNCTION table_priv_message(NAME, NAME, NAME[] )
+RETURNS TEXT AS $$
+	SELECT
+        ('Role ' || quote_ident($2) || ' should be granted '
+            || CASE WHEN $3[1] IS NULL THEN 'no privileges' ELSE array_to_string($3, ', ') END
+            || ' on table ' || quote_ident($1)
+		);
+$$ LANGUAGE SQL;
+
+-- tables_privs_are ( schema, table[], user, privileges[] )
+CREATE OR REPLACE FUNCTION tables_privs_are ( NAME, NAME[], NAME, NAME[] )
+RETURNS TEXT AS $$
+DECLARE
+	grants TEXT[];
+	failure_messages TEXT[][];
+	failure boolean := false;
+	bad_priv_messages TEXT[][];
+	bad_priv_failure boolean := false;
+BEGIN
+    FOR i IN 1..array_upper($2, 1) LOOP
+		-- Umm we want to loop over the tables and gather grants and return
+		-- if we don't find one that is set correctly we return that information
+		grants := _get_table_privs( $3, quote_ident($1) || '.' || quote_ident($2[i]) );
+
+		IF grants[1] = 'undefined_table' THEN
+			failure_messages[i] := E'\n' || diag(
+				'    Table ' || quote_ident($1) || '.' || quote_ident($2[i]) || ' does not exist'
+			);
+			failure := true;
+		ELSIF grants[1] = 'undefined_role' THEN
+			failure_messages[i] := E'\n' || diag(
+				'    Role ' || quote_ident($3) || ' does not exist for table ' || quote_ident($2[i])
+			);
+			failure := true;
+		ELSE
+			failure_messages[i] = NULL;
+		END IF;
+
+		IF _set_difference ( grants, $4) <> '{}' THEN
+			bad_priv_messages[i] := _areni_message_helper(
+				'privileges', grants, $4);
+		ELSIF _set_difference ($4, grants) <> '{}' THEN
+			bad_priv_messages[i] := _areni_message_helper(
+				'privileges', $4, grants);
+		END IF;
+
+		IF bad_priv_messages[i] is not NULL AND bad_priv_messages[i] <> '' THEN
+			bad_priv_failure := true;
+			bad_priv_messages[i] = bad_priv_messages[i] || table_priv_message($2[i], $3, $4);
+		END IF;
+    END LOOP;
+
+	IF failure = true THEN
+		-- Probably return all the messages concatenated
+		return ok(false, array_to_string(failure_messages, ', '));
+	ELSIF bad_priv_failure = true THEN
+		return ok(false, array_to_string(bad_priv_messages, ', '));
+	ELSE
+		RETURN ok(true, 'All tables have appropriate privs.');
+	END IF;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
 
 CREATE OR REPLACE FUNCTION _db_privs()
 RETURNS NAME[] AS $$
