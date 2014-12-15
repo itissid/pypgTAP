@@ -32,20 +32,12 @@ $$ LANGUAGE plpythonu strict;
 postgres's plpythonu
  - You can test standalone SQL code(Like for Postgres Derivatives like redshift) or test stored procedures
 
-Added Feature(s)
-=====
-- Currently you can start and stop a postgres server using my python utilities. Its very easy. Install the lastest Postgres(I think its 9.3). Although older versions may work but I haven't tested it yet.
-
-Upcoming feature(s):
-=====
-- Will be adding virtualenv support shortly along with lots of examples.
-
-A taste of things.
+Setting things up
 =====
 - First you need to install postgres on your favorite OS. [Postgres](http://www.postgresql.org/download/macosx/)
 ***You Must install it with python support***
 - Once installed make sure the postgres server isn't started. Postgres starts by default due to init.d configuration
-that is built into its packaging (Idiotic over configuration IMHO).
+that is built into its packaging (Idiotic over configuration by package managers IMHO).
 
 How to use in your project(example)
 =====
@@ -54,9 +46,9 @@ Assuming you have python project:
 pip install https://github.com/itissid/pypgTAP#pypgtap
 ```
 This will give you access to two scripts in your bin/directory
-`start_harness` and `run_all_tests` and `stop_harness` 
+`start_harness` and `run_all_tests` and `stop_harness`
 
-##### Create a test file 
+##### Create a test file
 ```
 mkdir -p /tmp/example_project/tests/
 
@@ -95,7 +87,7 @@ server started
 ##### Second run the tests
 
 ```
-(nofailbowl)sid$ run_all_tests -w /tmp/example_project/ 
+(nofailbowl)sid$ run_all_tests -w /tmp/example_project/
 /tmp/example_project/  project test summary:
 
 1..1
