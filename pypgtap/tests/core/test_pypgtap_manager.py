@@ -30,7 +30,7 @@ class PyPGTAPTestManager(unittest.TestCase):
                 with patch.object(manager, '_set_virtual_env_dir'):
                     with patch.object(manager, '_set_project_dir') \
                             as mock_wf_setter:
-                        manager.execute_project_test('example')
+                        manager.execute_project_test('example_project')
                         call_arg_flattener = lambda mock: list(
                             its.chain(*its.chain(*mock.call_args_list))
                         )
@@ -39,9 +39,9 @@ class PyPGTAPTestManager(unittest.TestCase):
                         actual_project_dirs = call_arg_flattener(mock_wf_setter)
                         self.assertEqual(1, len(actual_project_dirs))
                         self.assertEquals(
-                            os.path.abspath('example'), actual_project_dirs[0])
+                            os.path.abspath('example_project'), actual_project_dirs[0])
 
-   def test_is_valid_project_test_dir(self):
+    def test_is_valid_project_test_dir(self):
         """
         Tests under_test.PyPGTAPTestManager.is_valid_project_test_dir with a
         project test directory containing a test(s) directory and then with one
@@ -49,7 +49,7 @@ class PyPGTAPTestManager(unittest.TestCase):
         latter case it returns an exception.
         """
         under_test_manager = under_test.PyPGTAPTestManager()
-        self.assertTrue(under_test_manager.is_valid_project_test_dir('example'))
+        self.assertTrue(under_test_manager.is_valid_project_test_dir('example_project'))
         project_dir = 'pypgtap/core/'
         # Match the error output with a regular expression.
         with self.assertRaisesRegexp(
@@ -63,15 +63,9 @@ class PyPGTAPTestManager(unittest.TestCase):
         """
         under_test_manager = under_test.PyPGTAPTestManager()
         test_scripts = [
-            i for i in under_test_manager.get_test_scripts('example')]
-        self.assertEquals(7, len(test_scripts))
-        self.assertIn('example/test/ddl/test_hello_world.sql', test_scripts)
-        self.assertIn('example/test/ddl/test_format_sql_module.sql', test_scripts)
-        self.assertIn('example/test/ddl/test_copy_json.sql', test_scripts)
-        self.assertIn('example/test/ddl/test_table_names.sql', test_scripts)
-        self.assertIn('example/test/dml/test_parse_assessment_log_table.sql', test_scripts)
-        self.assertIn('example/test/dml/test_compatibility_functions.sql', test_scripts)
-        self.assertIn('example/test/dml/test_assessment_histograms.sql', test_scripts)
+            i for i in under_test_manager.get_test_scripts('example_project')]
+        self.assertEquals(1, len(test_scripts))
+        self.assertIn('example_project/tests/test_hello_world.sql', test_scripts)
 
         test_scripts = [
             i for i in under_test_manager.get_test_scripts('pypgtap')]

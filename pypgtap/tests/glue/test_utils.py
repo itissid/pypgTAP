@@ -2,7 +2,7 @@ import json
 import unittest
 
 from mock import patch, mock_open, call
-import pypgtap.core.project.utils as under_test_module
+import pypgtap.core.glue.utils as under_test_module
 
 
 class TestJSONPathParsing(unittest.TestCase):

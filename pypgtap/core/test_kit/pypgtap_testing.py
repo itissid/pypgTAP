@@ -245,7 +245,7 @@ class PyPGTAPTestManager(object):
         # fine for now but we may want to walk and find all the .sql files to
         # execute.
         pypgtap_init_scripts = pkg_resources.resource_listdir(
-            'pypgtap.core', 'project')
+            'pypgtap.core', 'glue')
         base_script = 'base.sql'  # This script needs to be there!
         if base_script not in pypgtap_init_scripts:
             raise EnvironmentError(
@@ -256,11 +256,11 @@ class PyPGTAPTestManager(object):
         # Does important setup before anything can and should execute.
         pypgtap_init_scripts.remove(base_script)
         abs_basescript_path = pkg_resources.resource_filename(
-            'pypgtap.core.project', base_script)
+            'pypgtap.core.glue', base_script)
         _execute_sql_script(abs_basescript_path)
 
         for pypgtap_init_script in pypgtap_init_scripts:
             if pypgtap_init_script.endswith('.sql'):
                 _execute_sql_script(pkg_resources.resource_filename(
-                    'pypgtap.core.project', pypgtap_init_script))
+                    'pypgtap.core.glue', pypgtap_init_script))
         self._is_initialized = True

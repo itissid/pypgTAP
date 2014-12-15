@@ -1,7 +1,7 @@
 """
 This module will contain python utilities called from plpython inside postgres
 scripts. A lot of these are meant for just pypgTAP to do its magic so it can parse
-load and prepare Redshift SQL to run it on the postgres harness. You should not
+load and prepare SQL to run it on the postgres harness. You should not
 really call these from outside plpython methods; See utils.sql for examples.
 
 TODO(Sid): Logger instantiation when called from inside the plpython methods is
@@ -21,9 +21,6 @@ import logging
 import os
 import json
 import jsonpath_rw
-import yaml
-
-from pypgtap.core.test_kit.utils import RegExLexers
 
 _logger = logging.getLogger(__name__)
 
