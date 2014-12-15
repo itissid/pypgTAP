@@ -7,6 +7,7 @@ For testing Stored Procedures and SQL queries you need to:
 - All your Test Suites need to be tested and Rollbacked(critical).
 - Test data needs to be added. *YAAAAAWNNN!*
 - CI integration, Docker. *YAAAAAAAAWNNNN!*
+
 Thats a lot of work! Luckily pypgTAP solves a lot of these issues.
 - *Oh And did we mention its in* **python** *!!!!*
 
