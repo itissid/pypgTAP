@@ -1,4 +1,4 @@
-[Making postgres code SDLC saner!](pgtap.org)
+[Making postgres code SDLC saner!](https://github.com/itissid/pypgTAP#pypgtap)
 =====
 For testing Stored Procedures and SQL queries you need to:
 - Set up postgres environment.
