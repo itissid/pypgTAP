@@ -1,6 +1,14 @@
-pypgTAP
+[pypgTAP](https://github.com/itissid/pypgTAP#pypgtap)
 =====
-https://github.com/itissid/pypgTAP#pypgtap
+For testing Stored Procedures and SQL queries you need to:
+- Set up postgres environment.
+- A Test server needs to be created. 
+- Test environment needs to be setup.
+- All your Test Suites need to be tested and Rollbacked(critical).
+- Test data needs to be added. *YAAAAAWNNN!*
+- CI integration, Docker. *YAAAAAAAAWNNNN!*
+Thats a lot of work! Luckily pypgTAP solves a lot of these issues.
+- *Oh And did we mention its in* **python** *!!!!*
 
 *Bringing python closer to postgres.* [pgTAP](pgtap.org)
 
