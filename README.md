@@ -1,4 +1,4 @@
-[pypgTAP](https://github.com/itissid/pypgTAP#pypgtap)
+[Making postgres code SDLC saner!.](pgtap.org)
 =====
 For testing Stored Procedures and SQL queries you need to:
 - Set up postgres environment.
@@ -10,7 +10,6 @@ For testing Stored Procedures and SQL queries you need to:
 Thats a lot of work! Luckily pypgTAP solves a lot of these issues.
 - *Oh And did we mention its in* **python** *!!!!*
 
-*Bringing python closer to postgres.* [pgTAP](pgtap.org)
 
 What issue does this framework solve?
 =====
