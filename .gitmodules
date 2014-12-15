@@ -1,9 +1,0 @@
-[submodule "test_kit/lib/json_path"]
-	path = test_kit/lib/json_path
-	url = https://github.com/itissid/json_path
-[submodule "test_kit/lib/ply-3.4"]
-	path = test_kit/lib/ply-3.4
-	url = https://github.com/itissid/ply.git
-[submodule "test_kit/lib/six-1.7.3"]
-	path = test_kit/lib/six-1.7.3
-	url = https://github.com/itissid/six.git
