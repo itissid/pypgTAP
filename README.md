@@ -9,7 +9,7 @@ For testing Stored Procedures and SQL queries you need to:
 - CI integration, Docker. *YAAAAAAAAWNNNN!*
 
 Thats a lot of work! Luckily pypgTAP solves a lot of these issues.
-- *Oh And did we mention its in* **python** *!!!!*
+- *Oh And did we mention its in* **python** *?*
 
 
 What issue does this framework solve?
