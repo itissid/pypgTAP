@@ -1,6 +1,6 @@
 import unittest
 
-from pypgtap.core.test_kit.pypgtap_error import RsTAPSubprocessError
+from pypgtap.core.test_kit.pypgtap_error import PyPGTAPSubprocessError
 
 
 class ErrorTest(unittest.TestCase):
@@ -9,10 +9,10 @@ class ErrorTest(unittest.TestCase):
 
     def test_pypgtap_subprocess_error(self):
         """
-        Test the RsTAPSubprocessError __init__ and its data
+        Test the PyPGTAPSubprocessError __init__ and its data
         """
-        with self.assertRaises(RsTAPSubprocessError) as info:
-            raise RsTAPSubprocessError(
+        with self.assertRaises(PyPGTAPSubprocessError) as info:
+            raise PyPGTAPSubprocessError(
                 'Error encountered', rc=1, cmd='testcommand -e')
         exception = info.exception
         self.assertEqual(exception.msg, 'Error encountered')
