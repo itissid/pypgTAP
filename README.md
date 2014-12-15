@@ -47,13 +47,74 @@ A taste of things.
 - Once installed make sure the postgres server isn't started. Postgres starts by default due to init.d configuration
 that is built into its packaging (Idiotic over configuration IMHO).
 
-How to use in your project
+How to use in your project(example)
 =====
 Assuming you have python project:
 ```
 pip install https://github.com/itissid/pypgTAP#pypgtap
 ```
 This will give you access to two scripts in your bin/directory
-`start_harness` and `stop_harness`
+`start_harness` and `run_all_tests` and `stop_harness` 
 
-You can follow the examples to write tests in the test/ folder.
+##### Create a test file 
+```
+mkdir -p /tmp/example_project/tests/
+
+echo 'BEGIN;
+-- Plan the tests.
+SELECT plan(1);
+
+-- Run the tests.
+SELECT pass( 'My test passed, w00t!' );
+
+-- Finish the tests and clean up.
+SELECT * FROM finish();
+ROLLBACK;' > /tmp/example_project/tests/test_hello_world.sql
+```
+
+Its just 3 easy steps now.
+
+##### First start the server (note my virtualenv is active)
+
+```
+(nofailbowl)sid$ start_harness
+The files belonging to this database system will be owned by user "sid".
+This user must also own the server process.
+....
+creating subdirectories ... ok
+...
+
+Success. You can now start the database server using:
+...
+/usr/local/Cellar/postgresql/9.3.5_1/bin/postgres -D /var/folders/s7/.../T/__rs_tap_process_flags
+or
+    /usr/local/Cellar/postgresql/9.3.5_1/bin/pg_ctl -D /var/folders/s7/.../T/__rs_tap_process_flags -l logfile start
+...
+server started
+```
+##### Second run the tests
+
+```
+(nofailbowl)sid$ run_all_tests -w /tmp/example_project/ 
+/tmp/example_project/  project test summary:
+
+1..1
+ok 1 - My test passed, w00t!
+
+```
+
+##### Last stop the harness!
+```f
+(failbowl)$ stop_harness
+pg_ctl: server is running (PID: 8867)
+/usr/local/Cellar/postgresql/9.3.5_1/bin/postgres "-D" "/var/folders/s7/.../T/__rs_tap_process_flags" "-h" "localhost" "-k" "/tmp"
+waiting for server to shut down....LOG:  received smart shutdown request
+LOG:  autovacuum launcher shutting down
+LOG:  shutting down
+LOG:  database system is shut down
+ done
+server stopped
+```
+
+Fin!
+
