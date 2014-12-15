@@ -12,16 +12,11 @@ Thats a lot of work! Luckily pypgTAP solves a lot of these issues.
 - *Oh And did we mention its in* **python** *?*
 
 
-What issue does this framework solve?
+How does it do it?
 =====
-- pgTAP can be executed to run tests over your Postgres codebase, but to test the code base
-on local and CI environments was particularly hard. Postgres needs to be set up and a postgres
-test server needs to be instantiated. Next you want to instantiate your test environment with
-stored procedures and run the tests. You want to have some test data to load its many lines...
-This is a lot of work! Enter pypgTAP.
-- This is a thin python layer over pgTAP that provides teh following:
- - An integrated utility to start and stop postgres test servers to run pgTAP tests.
- - Virtualenv python support: The industry standard for using python is vritualen and tox and its a pain to use pgTAP
+- It launches a throwaway postgres server, executes your tests, and discrads the server and its files.
+- pypgTAP can be executed to run multiple test suites over your Postgres codebase in an isolated manner.
+- Virtualenv python support: The industry standard for using python is vritualen and tox and its a pain to use pgTAP
  with python.
    *Remember plpython procedures execute on the postgres server and it cannot find python procedures executed by a
 client like psql* Example:
@@ -35,10 +30,14 @@ AS $$
 
 $$ LANGUAGE plpythonu strict;
 ```
- - The above facilitates reuse of existing python code base, *And hey we don't need an excuse to write in pure python :)*
- - It also makes it easy for people to do SDLC in pure python when its necessary and just use it seamlessly from within
-postgres's plpythonu
- - You can test standalone SQL code(Like for Postgres Derivatives like redshift) or test stored procedures
+ - The virtualenv sharing also facilitates reuse of existing python code base, *And hey we all just want an excuse to write in pure python :)*
+ - It also makes it easy for people to do SDLC in pure python when its necessary and just use it seamlessly from within postgres's plpythonu.
+ - You can refer to resources within your project root in your unit tests and pypgtap will find them for you.
+ - You can test standalone SQL code (Like for Postgres Derivatives like redshift that don't support stored procedures) or test stored procedures.
+
+Future Features
+=====
+I will be adding a Docker file for launching postgres and running unit tests for this project soon. You can copy paste that and run it by just changing a few variables. This should be easy, its just that I have not gotten to it yet.
 
 Setting things up
 =====
