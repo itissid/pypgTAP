@@ -4,7 +4,7 @@ For testing Stored Procedures and SQL queries you need to:
 - Set up postgres environment.
 - A Test server needs to be created. 
 - Test environment needs to be setup.
-- All your Test Suites need to be tested and Rollbacked(critical).
+- All your Test Suites need to be tested and Rollbacked (critical).
 - Test data needs to be added. *YAAAAAWNNN!*
 - CI integration, Docker. *YAAAAAAAAWNNNN!*
 
@@ -14,9 +14,9 @@ Thats a lot of work! Luckily pypgTAP solves a lot of these issues.
 
 How does it do it?
 =====
-- It launches a throwaway postgres server, executes your tests, and discrads the server and its files.
+- It launches a throwaway postgres server, executes your tests, and discards the server and its files.
 - pypgTAP can be executed to run multiple test suites over your Postgres codebase in an isolated manner.
-- Virtualenv python support: The industry standard for using python is vritualen and tox and its a pain to use pgTAP
+- Virtualenv python support: The industry standard for using python is virtualenv and tox and its a pain to use pgTAP
  with python.
    *Remember plpython procedures execute on the postgres server and it cannot find python procedures executed by a
 client like psql* Example:
