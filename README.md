@@ -43,8 +43,8 @@ Setting things up
 =====
 - First you need to install postgres on your favorite OS. [Postgres](http://www.postgresql.org/download/macosx/)
 ***You Must install it with python support***
-- Once installed make sure the postgres server isn't started. Postgres starts by default due to init.d configuration
-that is built into its packaging (Idiotic over configuration by package managers IMHO).
+- Once installed make sure the postgres server isn't started. Postgres starts by default on Debian-like systems
+due to init.d configuration that is built into its packaging (Idiotic over configuration by package managers IMHO).
 
 How to use in your project(example)
 =====
