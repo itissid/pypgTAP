@@ -21,7 +21,7 @@ _logger = logging.getLogger(__name__)
 
 class HarnessTest(unittest.TestCase):
     """
-    Test if the harness can be started and stopped programaticaly only
+    Test if the harness can be started and stopped programmatically only
     """
     def test_harness_start_stop(self):
         """

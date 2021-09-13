@@ -42,7 +42,7 @@ I will be adding a Docker file for launching postgres and running unit tests for
 There is some tech debt incurred in the development of the project that is listed here. Tech Debt is the corners I cut while reaching a solution quickly. Tech debt different from features that enhance a product and I know that tech debt almost always comes back to bite:
 - The implementation still has tight coupling between packaging and its dependency in the code. Right now as long as its done as a pypi tarball or an sdist using setuptools and is also installed using pip its ok. I know that debian has another way of dealing with packaging, so installing it from that is something not explored.
 - Providing better interfaces to extend: I know that I can leverage setuptools to provide for plugins to initialize their own testing framework(apart from pgTAP)  and even offer alternatives to the choice of postgres (Of course the DB type will almost always be coupled to the testing framework). For this interfaces need to be created and contracts need to be defined.
-- Also is the harocded reliance on postgres's admin tools leveraged through python subprocess that make all this magic happen. This should be easier to do than the above though.
+- Also is the hardcoded reliance on postgres's admin tools leveraged through python subprocess that make all this magic happen. This should be easier to do than the above though.
 
 Setting things up
 =====
